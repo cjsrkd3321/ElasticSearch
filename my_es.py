@@ -34,7 +34,17 @@ def get_document_using_id(es, index_name: str, document_id: str) -> dict:
     document = {}
     result = es.search(index=index_name, body={"query": {"match": {"_id": document_id}}})
     if result["hits"]["total"]["value"]:  # value is 1 then,
-        document = result["hits"]["hits"][0]
+        document = result["hits"]["hits"][0]["_source"]
+    else:
+        print_fail_reason(get_document_using_id, result)
+    return document
+
+
+def get_document(es, index_name: str, content: dict) -> dict:
+    document = {}
+    result = es.search(index=index_name, body=content)
+    if result["hits"]["total"]["value"]:  # value is 1 then,
+        document = result["hits"]["hits"][0]["_source"]
     else:
         print_fail_reason(get_document_using_id, result)
     return document
